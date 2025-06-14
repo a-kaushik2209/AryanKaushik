@@ -1010,6 +1010,8 @@
             text-align: center;
             position: relative;
             overflow: hidden;
+            width: 100%;
+            box-sizing: border-box;
         }
         
         footer::before {
@@ -1188,8 +1190,30 @@
                 gap: 20px;
             }
             
+            .footer-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                margin-bottom: 15px;
+            }
+            
             .parallax-title {
                 font-size: 28px;
+            }
+            
+            .contact-container {
+                gap: 30px;
+            }
+            
+            body {
+                overflow-x: hidden;
+                width: 100%;
+            }
+            
+            .container {
+                padding-left: 15px;
+                padding-right: 15px;
+                width: 100%;
+                box-sizing: border-box;
             }
         }
         
@@ -1313,7 +1337,7 @@
             <h2 class="section-title">About Me</h2>
             <div class="about-content">
                 <div class="about-text">
-                    <p>Hello! I'm a passionate developer and programmer with a strong foundation in web development and programming languages. I'm currently pursuing my education in computer science and looking forward to making an impact in the tech world.</p>
+                    <p style="margin-bottom: 20px;">Hello! I'm a passionate developer and programmer with a strong foundation in web development and programming languages. I'm currently pursuing my education in computer science and looking forward to making an impact in the tech world.</p>
                     
                     <div class="education-item">
                         <h3>Maharaja Agrasen Institute of Technology</h3>
@@ -1321,12 +1345,12 @@
                         <p>GPA: 9.04</p>
                     </div>
                     
-                    <div class="education-item">
+                    <div class="education-item" style="margin-top: 20px;">
                         <h3>Future Plans</h3>
                         <p>I'm looking forward to specializing in full-stack development and contributing to open-source projects. My goal is to work with innovative companies that are pushing the boundaries of technology.</p>
                     </div>
                     
-                    <div class="education-item">
+                    <div class="education-item" style="margin-top: 20px;">
                         <h3>Hobbies & Interests</h3>
                         <p>Outside of coding, I enjoy photography, hiking, and playing chess. I also participate in hackathons and coding competitions to challenge myself.</p>
                     </div>
@@ -1489,7 +1513,7 @@
             <div class="achievements-container">
                 <div class="achievement-card">
                     <div class="achievement-img">
-                        <img src="certificate.jpg" alt="MindSync Hackathon">
+                        <img src="certificatenew.png" alt="MindSync Hackathon">
                     </div>
                     <h3>MindSync-4th</h3>
                     <p>Our team, Pulp Function, clinched 4th place at the MindSync Hackathon organized by Swaas - GTBIT with our project Saarthi.</p>
