@@ -13,9 +13,7 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
+    service: 'gmail',
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
@@ -33,34 +31,30 @@ app.post('/send-message', async (req, res) => {
         return res.status(400).json({ success: false, message: "All fields are required!" });
     }
 
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+        return res.status(500).json({ 
+            success: false, 
+            message: 'Email service not configured properly. Please contact the administrator.'
+        });
+    }
+
     const mailOptions = {
-        from: process.env.EMAIL_USER, // Use your verified email as sender
+        from: process.env.EMAIL_USER,
         to: process.env.EMAIL_USER,
         subject: `New Contact Form Submission from ${name}`,
         text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
-        replyTo: email // Set reply-to as the user's email
+        html: `<strong>Name:</strong> ${name}<br>
+               <strong>Email:</strong> ${email}<br>
+               <strong>Message:</strong> ${message}`,
+        replyTo: email
     };
 
     try {
-        // Verify connection configuration first
         await new Promise((resolve, reject) => {
-            transporter.verify(function (error, success) {
+            transporter.sendMail(mailOptions, (error, info) => {
                 if (error) {
-                    console.log(error);
+                    console.error("Error sending email:", error);
                     reject(error);
-                } else {
-                    console.log("Server is ready to take our messages");
-                    resolve(success);
-                }
-            });
-        });
-
-        // Send mail with defined transport object
-        await new Promise((resolve, reject) => {
-            transporter.sendMail(mailOptions, (err, info) => {
-                if (err) {
-                    console.error("Error sending email:", err);
-                    reject(err);
                 } else {
                     console.log("Email sent: " + info.response);
                     resolve(info);
@@ -71,7 +65,11 @@ app.post('/send-message', async (req, res) => {
         res.status(200).json({ success: true, message: 'Message sent successfully!' });
     } catch (error) {
         console.error("Failed to send message:", error);
-        res.status(500).json({ success: false, message: 'Failed to send message', error: error.toString() });
+        res.status(500).json({ 
+            success: false, 
+            message: 'Failed to send message', 
+            error: error.toString() 
+        });
     }
 });
 
