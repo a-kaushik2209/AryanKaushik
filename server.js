@@ -13,7 +13,9 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
@@ -32,17 +34,44 @@ app.post('/send-message', async (req, res) => {
     }
 
     const mailOptions = {
-        from: email,
+        from: process.env.EMAIL_USER, // Use your verified email as sender
         to: process.env.EMAIL_USER,
         subject: `New Contact Form Submission from ${name}`,
-        text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`
+        text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
+        replyTo: email // Set reply-to as the user's email
     };
 
     try {
-        await transporter.sendMail(mailOptions);
+        // Verify connection configuration first
+        await new Promise((resolve, reject) => {
+            transporter.verify(function (error, success) {
+                if (error) {
+                    console.log(error);
+                    reject(error);
+                } else {
+                    console.log("Server is ready to take our messages");
+                    resolve(success);
+                }
+            });
+        });
+
+        // Send mail with defined transport object
+        await new Promise((resolve, reject) => {
+            transporter.sendMail(mailOptions, (err, info) => {
+                if (err) {
+                    console.error("Error sending email:", err);
+                    reject(err);
+                } else {
+                    console.log("Email sent: " + info.response);
+                    resolve(info);
+                }
+            });
+        });
+
         res.status(200).json({ success: true, message: 'Message sent successfully!' });
     } catch (error) {
-        res.status(500).json({ success: false, message: 'Failed to send message', error });
+        console.error("Failed to send message:", error);
+        res.status(500).json({ success: false, message: 'Failed to send message', error: error.toString() });
     }
 });
 
